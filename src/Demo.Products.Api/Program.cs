@@ -1,10 +1,13 @@
 using Demo.Products.Api;
+using Demo.Products.Api.Core.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ApiValidationFilter>();
+});
 Bootstrapper.RegisterDependencies(builder);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
