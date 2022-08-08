@@ -7,7 +7,7 @@ We came across an interesting problem to fix, when upgrading our APIs to latest 
 Validation is crucial when designing APIs, and we are using the wonderful `FluentValidation.AspNetCore` in our APIs. 
 How it seamlessly allow the engineers to define the validations, and integrate with the ASP.NET echo system is a breeze.
 
-But we got this error after upgrading our packages and ASP.NET
+Some of our validators contain asynchronous validations, and after upgrading we got this error.
 
 ![cannot have async validators](images/cannot_have_async_validators.png)
 
@@ -104,7 +104,7 @@ public class CreateProductsController : ControllerBase
 ```
 
 *Note that I have used another Nuget package called `HybridModelBinding` to bind the model from different model binders and value providers.
-As you could see below the DTO is getting populated by both from the header and from the body*.
+As you can see below the DTO is getting populated by both from the header and from the body. Hybrid model binding is not relevant to the validations, but wanted to demonstrate that since the validation approach must happen after the model binding*.
 
 ```csharp
 [HybridBindClass(new []{Source.Header, Source.Body})]
@@ -188,7 +188,7 @@ public class ApiValidationFilter : IAsyncActionFilter
   * Return validation errors if there are any.
   * If there are validation errors, return the `ProblemDetails` response and short circuit the ASP.NET pipeline.
 
-**The extension method to return `ProblemDetails` from `ValidationFailure`s**
+**Extension method to return `ProblemDetails` from `ValidationFailure`s**
 
 It's pretty straight forward, it will create a `ProblemDetails` instance and, adds the "errors" in the `ValidationFailure` instance to it.
 ```csharp
@@ -248,7 +248,7 @@ public class CustomValidatorFactory : ICustomValidatorFactory
 
 ## Let's put these all together
 
-* Extension method to register `FluentValidators`, `ActionFilter` and the `CustomValidatorFactory`
+* Extension method to register `FluentValidators`, and the `CustomValidatorFactory`
 
 ```csharp
 public static class FluentValidationExtensions
@@ -277,7 +277,7 @@ public static class FluentValidationExtensions
 
 Notice that there are two options which can be used, one with a single assembly and the other with a set of assemblies where the `FluentValidation`s are located.
 
-In `Program.cs` let's use it,
+In `Program.cs` let's use it. Note that the `ApiValidationFilter` has been registered in the controller configuration.
 ```csharp
 using Demo.Products.Api;
 using Demo.Products.Api.Core;
