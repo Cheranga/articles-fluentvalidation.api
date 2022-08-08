@@ -14,7 +14,7 @@ public class ApiValidationFilter : IAsyncActionFilter
     {
         _validatorFactory = validatorFactory;
     }
-
+    
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         if (!context.ActionArguments.Any())
@@ -24,20 +24,11 @@ public class ApiValidationFilter : IAsyncActionFilter
         }
 
         var validationFailures = new List<ValidationFailure>();
+
         foreach (var actionArgument in context.ActionArguments)
         {
-            if (actionArgument.Value == null)
-            {
-                continue;
-            }
-
-            var validationResult = await ValidateAsync(actionArgument.Value);
-            if (validationResult.IsValid)
-            {
-                continue;
-            }
-
-            validationFailures.AddRange(validationResult.Errors);
+            var validationErrors = await GetValidationErrorsAsync(actionArgument.Value);
+            validationFailures.AddRange(validationErrors);
         }
 
         if (!validationFailures.Any())
@@ -48,20 +39,22 @@ public class ApiValidationFilter : IAsyncActionFilter
 
         context.Result = new BadRequestObjectResult(validationFailures.ToProblemDetails());
     }
-
-    private async Task<ValidationResult> ValidateAsync(object value)
+    
+    private async Task<IEnumerable<ValidationFailure>> GetValidationErrorsAsync(object value)
     {
+        
         if (value == null)
         {
-            return new ValidationResult();
+            return new[] {new ValidationFailure("", "instance is null")};
         }
 
         var validatorInstance = _validatorFactory.GetValidatorFor(value.GetType());
         if (validatorInstance == null)
         {
-            return new ValidationResult();
+            return new List<ValidationFailure>();
         }
 
-        return await validatorInstance.ValidateAsync(new ValidationContext<object>(value));
+        var validationResult =await validatorInstance.ValidateAsync(new ValidationContext<object>(value));
+        return validationResult.Errors ?? new List<ValidationFailure>();
     }
 }

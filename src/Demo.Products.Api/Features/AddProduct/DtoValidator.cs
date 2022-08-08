@@ -3,10 +3,11 @@ using FluentValidation;
 
 namespace Demo.Products.Api.Features.AddProduct;
 
-public class AddProductRequestDtoValidator : ModelValidatorBase<AddProductRequestDto>
+public class DtoValidator : ModelValidatorBase<RequestDto>
 {
-    public AddProductRequestDtoValidator()
+    public DtoValidator()
     {
+        RuleFor(x=>x.CorrelationId).NotNull().NotEmpty().WithMessage("x-correlation-id is required");
         RuleFor(x => x.Id).NotNull().NotEmpty().WithMessage("id is required");
         RuleFor(x => x.Name).MustAsync(async (s, token) =>
         {

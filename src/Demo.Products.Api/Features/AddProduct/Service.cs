@@ -2,12 +2,12 @@
 
 public interface ICreateProductService
 {
-    Task<bool> ExecuteAsync(AddProductRequest request);
+    Task<bool> ExecuteAsync(Request request);
 }
 
 public class CreateProductService : ICreateProductService
 {
-    public async Task<bool> ExecuteAsync(AddProductRequest request)
+    public async Task<bool> ExecuteAsync(Request request)
     {
         await Task.Delay(TimeSpan.FromSeconds(2));
         return true;

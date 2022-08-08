@@ -1,0 +1,48 @@
+﻿### adding a valid product must return "Ok" response
+#@name ValidRequest
+POST https://localhost:7046/api/products
+Content-Type: application/json
+x-correlation-id: "666"
+
+{
+  "id": "1",
+  "name": "Keyboard",
+  "price": 250.99
+}
+
+### adding a product without a "name" must return "BadRequest" response
+# @name InvalidRequestWithoutName
+POST https://localhost:7046/api/products
+Content-Type: application/json
+x-correlation-id: "666"
+
+{
+  "id": "1",  
+  "price": 250.99
+}
+
+### adding a product without an "id" must return "BadRequest" response
+#@name InvalidRequestWithoutId
+POST https://localhost:7046/api/products
+Content-Type: application/json
+x-correlation-id: "666"
+
+{  
+  "name": "Keyboard",
+  "price": 250.99
+}
+
+### adding a product without any input
+#@name InvalidRequestWithoutInput
+POST https://localhost:7046/api/products
+Content-Type: application/json
+x-correlation-id: "666"
+
+### adding a product without empty input
+#@name InvalidRequestWithEmptyInput
+POST https://localhost:7046/api/products
+Content-Type: application/json
+x-correlation-id: "666"
+
+{  
+}
