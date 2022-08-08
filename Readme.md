@@ -2,7 +2,7 @@
 
 ## Context
 
-We came across an interesting problem to fix, when upgrading our APIs to latest .NET and upgrading their respective packages.
+My friend @Ben (https://github.com/bmazzarol) and myself came across an interesting problem to fix, when upgrading our APIs to latest .NET and upgrading their respective packages.
 
 Validation is crucial when designing APIs, and we are using the wonderful `FluentValidation.AspNetCore` in our APIs. 
 How it seamlessly allow the engineers to define the validations, and integrate with the ASP.NET echo system is a breeze.
