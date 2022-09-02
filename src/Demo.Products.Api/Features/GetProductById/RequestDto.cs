@@ -8,12 +8,12 @@ public enum Availability
     UnAvailable
 }
 
-[HybridBindClass(new []{Source.Header, Source.QueryString})]
+[HybridBindClass(new[] { Source.Header, Source.QueryString })]
 public class RequestDto
 {
     [HybridBindProperty(Source.Header)]
     public string CorrelationId { get; set; }
-    
+
     [HybridBindProperty(Source.QueryString)]
     public string ProductId { get; set; }
 

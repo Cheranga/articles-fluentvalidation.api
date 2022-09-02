@@ -14,6 +14,11 @@ public class ProductSearchByIdService : IProductSearchByIdService
         await Task.Delay(TimeSpan.FromSeconds(2));
 
         // returning a mocked product
-        return new ProductDataModel(request.CorrelationId, request.ProductId, "keyboard", DateTime.UtcNow);
+        return new ProductDataModel(
+            request.CorrelationId,
+            request.ProductId,
+            "keyboard",
+            DateTime.UtcNow
+        );
     }
 }
