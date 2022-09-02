@@ -38,7 +38,7 @@ POST https://localhost:7046/api/products
 Content-Type: application/json
 x-correlation-id: "666"
 
-### adding a product without empty input
+### adding a product with empty input
 #@name InvalidRequestWithEmptyInput
 POST https://localhost:7046/api/products
 Content-Type: application/json
@@ -46,3 +46,9 @@ x-correlation-id: "666"
 
 {  
 }
+
+### get product by id
+#@name GetProductById
+GET https://localhost:7046/api/products?productId=888&availability=unavailable
+correlationId: "666"
+Accept: application/json

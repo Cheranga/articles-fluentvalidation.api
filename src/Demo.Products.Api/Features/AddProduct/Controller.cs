@@ -14,7 +14,7 @@ public class CreateProductsController : ControllerBase
         _service = service;
     }
 
-    [HttpPost("api/products")]
+    [HttpPost("api/products", Name = "AddProduct")]
     public async Task<IActionResult> AddProduct([FromHybrid] RequestDto request)
     {
         var addProductRequest = new Request(request.CorrelationId, request.Id, request.Name, request.Price);
