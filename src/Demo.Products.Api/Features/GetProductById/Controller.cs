@@ -1,4 +1,5 @@
-﻿using HybridModelBinding;
+﻿using System.Net;
+using HybridModelBinding;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Demo.Products.Api.Features.GetProductById;
@@ -7,18 +8,32 @@ namespace Demo.Products.Api.Features.GetProductById;
 public class Controller : ControllerBase
 {
     private readonly IProductSearchByIdService _service;
+    private readonly ILogger<Controller> _logger;
 
-    public Controller(IProductSearchByIdService service) => _service = service;
+    public Controller(IProductSearchByIdService service, ILogger<Controller> logger)
+    {
+        _service = service;
+        _logger = logger;
+    }
 
     [HttpGet("api/products", Name = "GetProductById")]
     public async Task<IActionResult> GetProductById([FromHybrid] RequestDto dto)
     {
-        var product = await _service.GetAsync(new Request(dto.CorrelationId, dto.ProductId));
-        if (string.IsNullOrEmpty(product.ProductId))
-        {
-            return NotFound();
-        }
+        var operation = await _service
+            .GetAsync(new Request(dto.CorrelationId, dto.ProductId))
+            .Run();
 
-        return Ok(product);
+        return operation.Match<IActionResult>(
+            model => Ok(model),
+            error =>
+            {
+                _logger.LogWarning(
+                    "{CorrelationId} getting product by id failed {@Error}",
+                    dto.CorrelationId,
+                    error
+                );
+                return StatusCode((int)(HttpStatusCode.InternalServerError));
+            }
+        );
     }
 }
