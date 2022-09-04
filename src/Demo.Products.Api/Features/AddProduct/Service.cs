@@ -1,15 +1,24 @@
-﻿namespace Demo.Products.Api.Features.AddProduct;
+﻿using LanguageExt;
+using LanguageExt.Common;
+using static LanguageExt.Prelude;
+
+namespace Demo.Products.Api.Features.AddProduct;
 
 public interface ICreateProductService
 {
-    Task<bool> ExecuteAsync(Request request);
+    Aff<Unit> ExecuteAsync(Request request);
 }
 
 public class CreateProductService : ICreateProductService
 {
-    public async Task<bool> ExecuteAsync(Request request)
+    public Aff<Unit> ExecuteAsync(Request request) =>
+        from op in AffMaybe<Unit>(async () => await AddProductAsync(request))
+        select op;
+
+    private static async Task<Unit> AddProductAsync(Request request)
     {
+        // TODO:
         await Task.Delay(TimeSpan.FromSeconds(2));
-        return true;
+        return unit;
     }
 }

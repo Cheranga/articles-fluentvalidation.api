@@ -1,24 +1,29 @@
 ﻿using Demo.Products.Api.Infrastructure.DataAccess;
+using LanguageExt;
+using static LanguageExt.Prelude;
 
 namespace Demo.Products.Api.Features.GetProductById;
 
 public interface IProductSearchByIdService
 {
-    Task<ProductDataModel> GetAsync(Request request);
+    Aff<ProductDataModel> GetAsync(Request request);
 }
 
 public class ProductSearchByIdService : IProductSearchByIdService
 {
-    public async Task<ProductDataModel> GetAsync(Request request)
+    private Task<ProductDataModel> GetProductAsync(Request request)
     {
-        await Task.Delay(TimeSpan.FromSeconds(2));
-
-        // returning a mocked product
-        return new ProductDataModel(
-            request.CorrelationId,
-            request.ProductId,
-            "keyboard",
-            DateTime.UtcNow
+        return Task.FromResult(
+            new ProductDataModel(
+                request.CorrelationId,
+                request.ProductId,
+                "keyboard",
+                DateTime.UtcNow
+            )
         );
     }
+
+    public Aff<ProductDataModel> GetAsync(Request request) =>
+        from op in AffMaybe<ProductDataModel>(async () => await GetProductAsync(request))
+        select op;
 }
